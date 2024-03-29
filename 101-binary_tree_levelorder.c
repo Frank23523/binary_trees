@@ -1,23 +1,23 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_height - measures the height of a binary tree
- * @tree: pointer to the root node of the tree to measure the height
+ * binary_tree_size - measures the size of a binary tree
+ * @tree: pointer to the root node of the tree to measure the size
  *
- * Return: 0 if tree is NULL, else height
+ * Return: size of tree, else 0
  */
-
-size_t binary_tree_height(const binary_tree_t *tree)
+size_t binary_tree_size(const binary_tree_t *tree)
 {
-	size_t left_h = 0, right_h = 0;
+	size_t size = 0;
 
 	if (tree == NULL)
 		return (0);
 
-	left_h = tree->left ? 1 + binary_tree_height(tree->left) : 0;
-	right_h = tree->right ? 1 + binary_tree_height(tree->right) : 1;
+	size += 1;
+	size += binary_tree_size(tree->left);
+	size += binary_tree_size(tree->right);
 
-	return ((left_h > right_h) ? left_h : right_h);
+	return (size);
 }
 
 /**
@@ -25,30 +25,30 @@ size_t binary_tree_height(const binary_tree_t *tree)
  * @tree: pointer to the root node of the tree to traverse
  * @func: pointer to a function to call for each node
  */
-
 void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
 {
-	int front = 0, rear = 0;
-	const binary_tree_t *current, **queue;
+	size_t front = 0, back = 0;
+	binary_tree_t **queue;
+	const binary_tree_t *node;
 
 	if (tree == NULL || func == NULL)
 		return;
 
-	queue = malloc(sizeof(binary_tree_t *) * binary_tree_height(tree) * 2);
+	queue = malloc(sizeof(binary_tree_t *) * binary_tree_size(tree));
 	if (queue == NULL)
 		return;
 
-	queue[rear++] = tree;
+	queue[back++] = (binary_tree_t *)tree;
 
-	while (front < rear)
+	while (front < back)
 	{
-		current = queue[front++];
-		func(current->n);
+		node = queue[front++];
+		func(node->n);
 
-		if (current->left != NULL)
-			queue[rear++] = current->left;
-		if (current->right != NULL)
-			queue[rear++] = current->right;
+		if (node->left)
+			queue[back++] = (binary_tree_t *)node->left;
+		if (node->right)
+			queue[back++] = (binary_tree_t *)node->right;
 	}
 	free(queue);
 }
